@@ -74,6 +74,8 @@ class ZkBlueTIck {
     identifyId: string;
   }) {
     this.checkOperator(near.predecessorAccountId());
+    const kyc = this.addressToKyc[address];
+    assert(!kyc, "Kyc already");
     const newKyc: Kyc = {
       kycId: this.kyc_current_index.toString(),
       isBlocked: false,
@@ -81,6 +83,13 @@ class ZkBlueTIck {
     };
     this.addressToKyc[address] = newKyc;
     this.addressToKycAddress[address] = address;
+  }
+
+  @call({})
+  block_kyc({ address }: { address: string; identifyId: string }) {
+    this.checkOperator(near.predecessorAccountId());
+    assert(!this.addressToKyc[address].isBlocked, "Blocked already");
+    this.addressToKyc[address].isBlocked = true;
   }
 
   @call({})
