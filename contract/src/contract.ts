@@ -7,6 +7,7 @@ import {
   LookupMap,
   initialize,
   assert,
+  NearPromise,
 } from "near-sdk-js";
 import { AccountId } from "near-sdk-js/lib/types";
 
@@ -27,11 +28,15 @@ class ZkBlueTIck {
   addressToKyc: LookupMap<any>;
   kyc_current_index: number;
   owner_id: string;
+  fee: bigint;
+  receiver_fee: string;
   operators: LookupMap<boolean>;
   constructor() {
     this.owner_id = "";
+    this.receiver_fee = "";
     this.addressToKyc = new LookupMap("kyc");
     this.kyc_current_index = 1;
+    this.fee = BigInt(2);
     this.addressToKycAddress = new LookupMap("addressToKycAddress");
     this.operators = new LookupMap("operators");
   }
@@ -57,12 +62,23 @@ class ZkBlueTIck {
     this.operators[operator_address] = value;
   }
 
+  @call({})
+  set_receiver_fee({ address }: { address: string }) {
+    this.checkOwner(near.predecessorAccountId());
+    assert(this.receiver_fee !== address, `Already set`);
+    this.receiver_fee = address;
+  }
+
   checkOwner(address: string) {
     assert(address === this.owner_id, `Only owner`);
   }
 
   checkOperator(address: string) {
     assert(this.operators[address], `Only operator`);
+  }
+
+  transfer({ amount, to }: { amount: bigint; to: AccountId }) {
+    return NearPromise.new(to).transfer(amount);
   }
 
   @call({})
@@ -92,12 +108,14 @@ class ZkBlueTIck {
     this.addressToKyc[address].isBlocked = true;
   }
 
-  @call({})
+  @call({ payableFunction: true })
   addWalletToKyc({ address }: { address: string }) {
     const kyc = this.addressToKyc[near.predecessorAccountId()];
     assert(!!kyc, "Require kyc address");
     assert(!kyc.isBlocked, "Blocked kyc");
+    assert(near.attachedDeposit() > this.fee, "Not enough fee");
     assert(!this.addressToKycAddress[address], "Already add");
+    this.transfer({ amount: this.fee, to: this.receiver_fee });
     this.addressToKycAddress[address] = near.predecessorAccountId();
   }
 
