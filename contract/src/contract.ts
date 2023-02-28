@@ -69,6 +69,14 @@ class ZkBlueTIck {
     this.receiver_fee = address;
   }
 
+  @call({})
+  set_fee({ new_fee }: { new_fee: bigint }) {
+    this.checkOwner(near.predecessorAccountId());
+    assert(new_fee > BigInt(0), `Require fee`);
+    assert(this.fee !== new_fee, `Already set`);
+    this.fee = new_fee;
+  }
+
   checkOwner(address: string) {
     assert(address === this.owner_id, `Only owner`);
   }
