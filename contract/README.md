@@ -77,3 +77,14 @@ near login
 ```
 
 and then use the logged account to sign the transaction: `--accountId <your-account>`.
+
+
+```bash
+# Init:
+near call zk-blue-tick.YOUR-NAME.testnet init '{"owner_id": "zk-blue-tick.YOUR-NAME.testnet"}' --accountId zk-blue-tick.YOUR-NAME.testnet
+```
+
+```bash
+# Set operator
+near call zk-blue-tick.YOUR-NAME.testnet set_operator '{"address": "dark2.testnet"}' --accountId zk-blue-tick.YOUR-NAME.testnet
+```

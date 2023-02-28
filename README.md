@@ -82,5 +82,3 @@ Step 3: set contract name in your frontend code
 Modify the line in `src/config.js` that sets the account name of the contract. Set it to the account id you used above.
 
     const CONTRACT_NAME = process.env.CONTRACT_NAME || 'zk-blue-tick.YOUR-NAME.testnet'
-
-
