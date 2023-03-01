@@ -98,3 +98,14 @@ near call zk-blue-tick.YOUR-NAME.testnet approved_kyc '{"address": "YOUR-ACCOUNT
 # Check kyc
 near view zk-blue-tick.YOUR-NAME.testnet check_kyc '{"address": "YOUR-ACCOUNT-test.testnet" }'
 ```
+
+
+```bash
+# Set fee 0.25 near
+near call zk-blue-tick.YOUR-NAME.testnet set_fee '{"new_fee": "250000000000000000000000"}' --accountId YOUR-NAME.testnet
+```
+
+```bash
+# get fee
+near view zk-blue-tick.dark2.testnet get_fee
+```

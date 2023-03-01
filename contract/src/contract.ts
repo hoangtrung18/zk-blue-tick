@@ -133,10 +133,18 @@ class ZkBlueTIck {
   }
 
   @view({})
+  get_fee(): bigint {
+    return this.fee;
+  }
+
+  @view({})
   check_kyc({ address }: { address: string }) {
-    const kyc = this.addressToKyc.get(address);
-    if (kyc) {
-      return true;
+    const kycWallet = this.addressToKycAddress.get(address);
+    if (kycWallet) {
+      const kyc = this.addressToKyc.get(kycWallet);
+      if (kyc) {
+        return true;
+      }
     }
     return false;
   }
