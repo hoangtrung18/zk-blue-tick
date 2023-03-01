@@ -118,10 +118,10 @@ class ZkBlueTIck {
 
   @call({ payableFunction: true })
   add_wallet_to_kyc({ address }: { address: string }) {
-    const kyc = this.addressToKyc[near.predecessorAccountId()];
+    const kyc = this.addressToKyc.get(near.predecessorAccountId());
     assert(!!kyc, "Require kyc address");
     assert(!kyc.isBlocked, "Blocked kyc");
-    assert(near.attachedDeposit() > this.fee, "Not enough fee");
+    assert(near.attachedDeposit() >= this.fee, "Not enough fee");
     assert(!this.addressToKycAddress.get(address), "Already add");
     this.transfer({ amount: this.fee, to: this.receiver_fee });
     this.addressToKycAddress.set(address, near.predecessorAccountId());
