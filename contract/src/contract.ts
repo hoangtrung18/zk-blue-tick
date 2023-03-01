@@ -123,8 +123,8 @@ class ZkBlueTIck {
     assert(!kyc.isBlocked, "Blocked kyc");
     assert(near.attachedDeposit() >= this.fee, "Not enough fee");
     assert(!this.addressToKycAddress.get(address), "Already add");
-    this.transfer({ amount: this.fee, to: this.receiver_fee });
     this.addressToKycAddress.set(address, near.predecessorAccountId());
+    return NearPromise.new(this.receiver_fee).transfer(near.attachedDeposit());
   }
 
   @view({})
