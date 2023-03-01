@@ -101,15 +101,15 @@ near call zk-blue-tick.YOUR-NAME.testnet set_fee '{"new_fee": "25000000000000000
 
 ```bash
 # get fee
-near view zk-blue-tick.dark2.testnet get_fee
+near view zk-blue-tick.YOUR-NAME.testnet get_fee
 ```
 
 ```bash
 # Add wallet to kyc
-near call zk-blue-tick.dark2.testnet add_wallet_to_kyc '{"address": "test_account.testnet"}' --accountId dark2.testnet --deposit 0.25
+near call zk-blue-tick.YOUR-NAME.testnet add_wallet_to_kyc '{"address": "test_account.testnet"}' --accountId YOUR-NAME.testnet --deposit 0.25
 ```
 
 ```bash
 # Check kyc
-near view zk-blue-tick.YOUR-NAME.testnet check_kyc '{"address": "YOUR-ACCOUNT-test.testnet" }'
+near view zk-blue-tick.YOUR-NAME.testnet check_kyc '{"address": "test_account.testnet" }'
 ```
