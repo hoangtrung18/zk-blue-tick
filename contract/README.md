@@ -81,10 +81,20 @@ and then use the logged account to sign the transaction: `--accountId <your-acco
 
 ```bash
 # Init:
-near call zk-blue-tick.YOUR-NAME.testnet init '{"owner_id": "zk-blue-tick.YOUR-NAME.testnet"}' --accountId zk-blue-tick.YOUR-NAME.testnet
+near call zk-blue-tick.YOUR-NAME.testnet init '{"owner_id": "YOUR-NAME.testnet"}' --accountId zk-blue-tick.YOUR-NAME.testnet
 ```
 
 ```bash
 # Set operator
-near call zk-blue-tick.YOUR-NAME.testnet set_operator '{"address": "dark2.testnet"}' --accountId zk-blue-tick.YOUR-NAME.testnet
+near call zk-blue-tick.YOUR-NAME.testnet set_operator '{"operator_address": "YOUR-ACCOUNT-2.testnet", "value": true}' --accountId YOUR-NAME.testnet
+```
+
+```bash
+# Approval kyc
+near call zk-blue-tick.YOUR-NAME.testnet approved_kyc '{"address": "YOUR-ACCOUNT-test.testnet", "identifyId":"12384517623" }' --accountId YOUR-ACCOUNT-2.testnet
+```
+
+```bash
+# Check kyc
+near view zk-blue-tick.YOUR-NAME.testnet check_kyc '{"address": "YOUR-ACCOUNT-test.testnet" }'
 ```

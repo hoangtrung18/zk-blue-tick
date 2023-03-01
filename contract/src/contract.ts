@@ -59,7 +59,7 @@ class ZkBlueTIck {
     value: boolean;
   }) {
     this.checkOwner(near.predecessorAccountId());
-    this.operators[operator_address] = value;
+    this.operators.set(operator_address, value);
   }
 
   @call({})
@@ -82,7 +82,7 @@ class ZkBlueTIck {
   }
 
   checkOperator(address: string) {
-    assert(this.operators[address], `Only operator`);
+    assert(this.operators.get(address), `Only operator`);
   }
 
   transfer({ amount, to }: { amount: bigint; to: AccountId }) {
@@ -98,37 +98,46 @@ class ZkBlueTIck {
     identifyId: string;
   }) {
     this.checkOperator(near.predecessorAccountId());
-    const kyc = this.addressToKyc[address];
+    const kyc = this.addressToKyc.get(address);
     assert(!kyc, "Kyc already");
     const newKyc: Kyc = {
       kycId: this.kyc_current_index.toString(),
       isBlocked: false,
       identifyId,
     };
-    this.addressToKyc[address] = newKyc;
-    this.addressToKycAddress[address] = address;
+    this.addressToKyc.set(address, newKyc);
+    this.addressToKycAddress.set(address, address);
   }
 
   @call({})
   block_kyc({ address }: { address: string; identifyId: string }) {
     this.checkOperator(near.predecessorAccountId());
-    assert(!this.addressToKyc[address].isBlocked, "Blocked already");
-    this.addressToKyc[address].isBlocked = true;
+    assert(!this.addressToKyc.get(address).isBlocked, "Blocked already");
+    this.addressToKyc.set(address, { isBlocked: true });
   }
 
   @call({ payableFunction: true })
-  addWalletToKyc({ address }: { address: string }) {
+  add_wallet_to_kyc({ address }: { address: string }) {
     const kyc = this.addressToKyc[near.predecessorAccountId()];
     assert(!!kyc, "Require kyc address");
     assert(!kyc.isBlocked, "Blocked kyc");
     assert(near.attachedDeposit() > this.fee, "Not enough fee");
-    assert(!this.addressToKycAddress[address], "Already add");
+    assert(!this.addressToKycAddress.get(address), "Already add");
     this.transfer({ amount: this.fee, to: this.receiver_fee });
-    this.addressToKycAddress[address] = near.predecessorAccountId();
+    this.addressToKycAddress.set(address, near.predecessorAccountId());
   }
 
   @view({})
-  getMyKycInfo(): Kyc {
-    return this.addressToKyc[near.predecessorAccountId()];
+  get_my_kyc(): Kyc {
+    return this.addressToKyc.get(near.predecessorAccountId());
+  }
+
+  @view({})
+  check_kyc({ address }: { address: string }) {
+    const kyc = this.addressToKyc.get(address);
+    if (kyc) {
+      return true;
+    }
+    return false;
   }
 }
