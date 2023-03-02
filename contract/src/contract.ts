@@ -107,6 +107,7 @@ class ZkBlueTIck {
     };
     this.addressToKyc.set(address, newKyc);
     this.addressToKycAddress.set(address, address);
+    this.kyc_current_index++;
   }
 
   @call({})
@@ -130,6 +131,11 @@ class ZkBlueTIck {
   @view({})
   get_my_kyc(): Kyc {
     return this.addressToKyc.get(near.predecessorAccountId());
+  }
+
+  @view({})
+  get_total_kyc_supply(): number {
+    return this.kyc_current_index - 1;
   }
 
   @view({})
