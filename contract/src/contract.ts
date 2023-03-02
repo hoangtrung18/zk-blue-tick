@@ -36,7 +36,7 @@ class ZkBlueTIck {
     this.receiver_fee = "";
     this.addressToKyc = new LookupMap("kyc");
     this.kyc_current_index = 1;
-    this.fee = BigInt(2);
+    this.fee = BigInt(0.25);
     this.addressToKycAddress = new LookupMap("addressToKycAddress");
     this.operators = new LookupMap("operators");
   }
