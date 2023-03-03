@@ -107,6 +107,7 @@ class ZkBlueTIck {
     };
     this.addressToKyc.set(address, newKyc);
     this.addressToKycAddress.set(address, address);
+    this.kyc_current_index++;
   }
 
   @call({})
@@ -114,6 +115,11 @@ class ZkBlueTIck {
     this.checkOperator(near.predecessorAccountId());
     assert(!this.addressToKyc.get(address).isBlocked, "Blocked already");
     this.addressToKyc.set(address, { isBlocked: true });
+  }
+
+  @view({})
+  get_total_kyc_supply() {
+    return this.kyc_current_index;
   }
 
   @call({ payableFunction: true })
@@ -127,7 +133,7 @@ class ZkBlueTIck {
     this.addressToKycAddress.set(address, near.predecessorAccountId());
   }
 
-  @view({})
+  @call({ payableFunction: true })
   get_my_kyc(): Kyc {
     return this.addressToKyc.get(near.predecessorAccountId());
   }
