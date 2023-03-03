@@ -95,8 +95,18 @@ near call zk-blue-tick.YOUR-NAME.testnet approved_kyc '{"address": "YOUR-ACCOUNT
 ```
 
 ```bash
+# Check my Kyc
+near call zk-blue-tick.tny.testnet get_my_kyc --accountId dark2.testnet --depositYocto 1
+```
+
+```bash
 # Set fee 0.25 near
-near call zk-blue-tick.YOUR-NAME.testnet set_fee '{"new_fee": "250000000000000000000000"}' --accountId YOUR-NAME.testnet
+near call zk-blue-tick.YOUR-NAME.testnet set_fee '{"new_fee": 0.25}' --accountId YOUR-NAME.testnet
+```
+
+```bash
+# Set receiver fee
+near call zk-blue-tick.YOUR-NAME.testnet set_receiver_fee '{"address": "test_account.testnet"}' --accountId YOUR-NAME.testnet
 ```
 
 ```bash
