@@ -36,7 +36,7 @@ class ZkBlueTIck {
     this.receiver_fee = "";
     this.addressToKyc = new LookupMap("kyc");
     this.kyc_current_index = 1;
-    this.fee = BigInt(0.25);
+    this.fee = BigInt(2);
     this.addressToKycAddress = new LookupMap("addressToKycAddress");
     this.operators = new LookupMap("operators");
   }
@@ -117,6 +117,11 @@ class ZkBlueTIck {
     this.addressToKyc.set(address, { isBlocked: true });
   }
 
+  @view({})
+  get_total_kyc_supply() {
+    return this.kyc_current_index;
+  }
+
   @call({ payableFunction: true })
   add_wallet_to_kyc({ address }: { address: string }) {
     const kyc = this.addressToKyc.get(near.predecessorAccountId());
@@ -124,18 +129,13 @@ class ZkBlueTIck {
     assert(!kyc.isBlocked, "Blocked kyc");
     assert(near.attachedDeposit() >= this.fee, "Not enough fee");
     assert(!this.addressToKycAddress.get(address), "Already add");
+    this.transfer({ amount: this.fee, to: this.receiver_fee });
     this.addressToKycAddress.set(address, near.predecessorAccountId());
-    return NearPromise.new(this.receiver_fee).transfer(near.attachedDeposit());
   }
 
-  @view({})
+  @call({ payableFunction: true })
   get_my_kyc(): Kyc {
     return this.addressToKyc.get(near.predecessorAccountId());
-  }
-
-  @view({})
-  get_total_kyc_supply(): number {
-    return this.kyc_current_index - 1;
   }
 
   @view({})
