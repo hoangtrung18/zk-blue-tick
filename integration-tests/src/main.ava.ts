@@ -1,5 +1,6 @@
 import { Worker, NearAccount } from "near-workspaces";
 import anyTest, { TestFn } from "ava";
+const MAX_GAS = 300_000_000_000_000n;
 
 const test = anyTest as TestFn<{
   worker: Worker;
@@ -73,7 +74,37 @@ test("Call approve bob", async (t) => {
     identifyId,
   });
 
-  const checkKyc: any = await bob.call(contract, "get_my_kyc", {});
+  const checkKyc: any = await bob.call(
+    contract,
+    "get_my_kyc",
+    {},
+    //@ts-ignore
+    { attachedDeposit: "1", gas: MAX_GAS }
+  );
   t.is(checkKyc.identifyId, identifyId);
   t.is(checkKyc.isBlocked, false);
+});
+
+test("get bob kyc address list success", async (t) => {
+  const { root, contract, alice, bob } = t.context.accounts;
+
+  const identifyId = "testId";
+  await root.callRaw(contract, "set_operator", {
+    operator_address: alice.accountId,
+    value: true,
+  });
+  await alice.callRaw(contract, "approved_kyc", {
+    address: bob.accountId,
+    identifyId,
+  });
+
+  const list: string[] = await bob.call(
+    contract,
+    "get_my_kyc_address_list",
+    {},
+    //@ts-ignore
+    { attachedDeposit: "1", gas: MAX_GAS }
+  );
+  t.is(list.length, 1);
+  t.is(list[0], bob.accountId);
 });
