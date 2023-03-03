@@ -53,6 +53,13 @@ test("Call set operator", async (t) => {
   t.is(res.result.status.SuccessValue, "");
 });
 
+test("check approve bob default should be null", async (t) => {
+  const { root, contract, bob } = t.context.accounts;
+
+  const checkKyc: any = await bob.call(contract, "get_my_kyc", {});
+  t.is(checkKyc, null);
+});
+
 test("Call approve bob", async (t) => {
   const { root, contract, alice, bob } = t.context.accounts;
 
