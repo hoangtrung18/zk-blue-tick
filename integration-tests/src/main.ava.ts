@@ -19,7 +19,7 @@ test.beforeEach(async (t) => {
   // Save state for test runs, it is unique for each test
   t.context.worker = worker;
   t.context.accounts = { root, contract };
-  root.call(contract, "init", { owner_id: root });
+  root.call(contract, "init", { owner_id: root.accountId });
 });
 
 test.afterEach.always(async (t) => {
@@ -29,12 +29,16 @@ test.afterEach.always(async (t) => {
   });
 });
 
+test("Init contract", async (t) => {
+  const { contract } = t.context.accounts;
+  const total = await contract.view("get_total_kyc_supply", {});
+  t.is(total, 1);
+});
+
 test("Init fee", async (t) => {
-  const { root, contract } = t.context.accounts;
-  await root.call(contract, "set_fee", { new_fee: BigInt(1) });
+  const { contract } = t.context.accounts;
   const fee = await contract.view("get_fee", {});
-  console.log(fee, "feeeeeee");
-  // t.is(fee, BigInt(0.25));
+  t.is(fee, "2");
 });
 
 // test('changes the message', async (t) => {
