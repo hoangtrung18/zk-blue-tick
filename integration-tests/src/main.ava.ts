@@ -61,15 +61,15 @@ test("check approve bob default should be null", async (t) => {
   t.is(checkKyc, null);
 });
 
-test("Call approve bob", async (t) => {
+test("Call approve success", async (t) => {
   const { root, contract, alice, bob } = t.context.accounts;
 
   const identifyId = "testId";
-  await root.callRaw(contract, "set_operator", {
+  await root.call(contract, "set_operator", {
     operator_address: alice.accountId,
     value: true,
   });
-  await alice.callRaw(contract, "approved_kyc", {
+  await alice.call(contract, "approved_kyc", {
     address: bob.accountId,
     identifyId,
   });
@@ -89,11 +89,11 @@ test("get bob kyc address list success", async (t) => {
   const { root, contract, alice, bob } = t.context.accounts;
 
   const identifyId = "testId";
-  await root.callRaw(contract, "set_operator", {
+  await root.call(contract, "set_operator", {
     operator_address: alice.accountId,
     value: true,
   });
-  await alice.callRaw(contract, "approved_kyc", {
+  await alice.call(contract, "approved_kyc", {
     address: bob.accountId,
     identifyId,
   });

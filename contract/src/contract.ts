@@ -9,6 +9,7 @@ import {
   assert,
   NearPromise,
 } from "near-sdk-js";
+// import * as crypto from "crypto";
 import { AccountId } from "near-sdk-js/lib/types";
 
 class Kyc {
@@ -155,7 +156,7 @@ class ZkBlueTIck {
     const currentChain = this.addressToKycChain.get(
       near.predecessorAccountId()
     );
-    return currentChain.split("-");
+    return currentChain ? currentChain.split("-") : [];
   }
 
   @view({})
