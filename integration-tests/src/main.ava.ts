@@ -72,6 +72,19 @@ test("check approve bob default should be null", async (t) => {
   t.is(checkKyc, null);
 });
 
+test("Only operator could be approve kyc", async (t) => {
+  const { root, contract, alice, bob } = t.context.accounts;
+
+  const identifyId = "testId";
+  const error = await t.throwsAsync(() =>
+    alice.call(contract, "approved_kyc", {
+      address: bob.accountId,
+      identifyId,
+    })
+  );
+  t.assert(error?.message.includes(`Only operator`));
+});
+
 test("Call approve success", async (t) => {
   const { root, contract, alice, bob } = t.context.accounts;
 
