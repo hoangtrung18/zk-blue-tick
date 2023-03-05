@@ -38,6 +38,17 @@ test("Init contract", async (t) => {
   t.is(total, 1);
 });
 
+test("Only operator could be update fee", async (t) => {
+  const { contract, alice } = t.context.accounts;
+
+  const error = await t.throwsAsync(() =>
+    alice.call(contract, "set_fee", {
+      new_fee: 2,
+    })
+  );
+  t.assert(error?.message.includes(`Only owner`));
+});
+
 test("Init fee", async (t) => {
   const { contract } = t.context.accounts;
   const fee = await contract.view("get_fee", {});
