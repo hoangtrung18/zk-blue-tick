@@ -161,6 +161,11 @@ class ZkBlueTIck {
     return this.addressToKyc.get(near.predecessorAccountId());
   }
 
+  @view({})
+  check_warning_account({ address }: { address: string }) {
+    return this.addressWarnedToReport.get(address);
+  }
+
   @call({ payableFunction: true })
   get_my_kyc_address_list(): string[] {
     const currentChain = this.addressToKycChain.get(
