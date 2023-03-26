@@ -118,7 +118,7 @@ test("Call approve success", async (t) => {
     { attachedDeposit: "1", gas: MAX_GAS }
   );
   t.is(checkKyc.identifyId, identifyId);
-  t.is(checkKyc.isBlocked, false);
+  t.is(checkKyc.isWarning, false);
 });
 
 test("get bob kyc address list success", async (t) => {

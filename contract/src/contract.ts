@@ -15,11 +15,11 @@ import { AccountId } from "near-sdk-js/lib/types";
 class Kyc {
   kycId: string;
   identifyId: string;
-  isBlocked: boolean;
+  isWarning: boolean;
   constructor(payload: any) {
     this.kycId = payload.token_id;
     this.identifyId = payload.identifyId;
-    this.isBlocked = payload.isBlocked;
+    this.isWarning = payload.isWarning;
   }
 }
 
@@ -28,6 +28,7 @@ class ZkBlueTIck {
   addressToKycAddress: LookupMap<string>;
   addressToKycChain: LookupMap<string>;
   addressToKyc: LookupMap<any>;
+  addressWarnedToReport: LookupMap<string>;
   kyc_current_index: number;
   owner_id: string;
   fee: bigint;
@@ -40,6 +41,7 @@ class ZkBlueTIck {
     this.kyc_current_index = 1;
     this.fee = BigInt(2);
     this.addressToKycAddress = new LookupMap("addressToKycAddress");
+    this.addressWarnedToReport = new LookupMap("addressWarnedToReport");
     this.operators = new LookupMap("operators");
     this.addressToKycChain = new LookupMap("addressToKycChain");
   }
@@ -51,6 +53,8 @@ class ZkBlueTIck {
     this.kyc_current_index = 1;
     this.addressToKyc = new LookupMap("addressToKyc");
     this.operators = new LookupMap("operators");
+    this.addressToKycChain = new LookupMap("addressToKycChain");
+    this.addressWarnedToReport = new LookupMap("addressWarnedToReport");
   }
 
   @call({})
@@ -105,7 +109,7 @@ class ZkBlueTIck {
     assert(!kyc, "Kyc already");
     const newKyc: Kyc = {
       kycId: this.kyc_current_index.toString(),
-      isBlocked: false,
+      isWarning: false,
       identifyId,
     };
     this.addressToKyc.set(address, newKyc);
@@ -115,10 +119,16 @@ class ZkBlueTIck {
   }
 
   @call({})
-  block_kyc({ address }: { address: string; identifyId: string }) {
+  set_warning_kyc({ address, report }: { address: string; report: string }) {
     this.checkOperator(near.predecessorAccountId());
-    assert(!this.addressToKyc.get(address).isBlocked, "Blocked already");
-    this.addressToKyc.set(address, { isBlocked: true });
+    const kycAddress = this.addressToKycAddress.get(address);
+    const kycInfo = this.addressToKyc.get(address);
+    assert(!this.addressWarnedToReport.get(address), "Warned kyc");
+    if (kycAddress == address && kycInfo) {
+      this.addressToKyc.set(address, { ...kycInfo, isWarning: true }); // report owner
+    } else {
+      this.addressWarnedToReport.set(address, report); //report sub account
+    }
   }
 
   @view({})
@@ -131,7 +141,7 @@ class ZkBlueTIck {
     const kyc = this.addressToKyc.get(near.predecessorAccountId());
 
     assert(!!kyc, "Require kyc address");
-    assert(!kyc.isBlocked, "Blocked kyc");
+    assert(!kyc.isWarning, "Warning kyc");
     assert(near.attachedDeposit() >= this.fee, "Not enough fee");
     assert(!this.addressToKycAddress.get(address), "Already add");
     const currentChain = this.addressToKycChain.get(
